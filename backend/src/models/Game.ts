@@ -1,21 +1,26 @@
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-import {MongoClient} from 'mongodb'
-dotenv.config()
-const username = process.env.USERNAME
-const password = process.env.PASSWORD
-const dbName = process.env.DB_NAME
+import mongoose, { Date, Document } from 'mongoose'
+import dbConnect from '../dbConnect';
 
-const uri = `mongodb+srv://${username}:${password}@math-racer-cluster.cdndn.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-mongoose.connect(uri);
+dbConnect();
 
 
 const { Schema, model } = mongoose;
+
+export interface iProblem extends Document {
+    question: String,
+    answer: Number
+}
 
 const problemSchema = new Schema({
     question: String,
     answer: Number
 })
+
+export interface iGame extends Document {
+    level: Number,
+    timeCreated: Date,
+    problems: Array<iProblem>
+}
 
 const gameSchema = new Schema({
     level: Number,
@@ -23,15 +28,13 @@ const gameSchema = new Schema({
     problems: [problemSchema]
 })
 
-const gameModel = model('Game', gameSchema);
+export const Game = model('Game', gameSchema);
 
-const game = new gameModel({
-    level: 10
-})
-game.save((err: any) => {
-    if (err) {
-        console.log(err);
-    }
-})
-
-export default gameModel;
+// const game = new gameModel({
+//     level: 10
+// })
+// game.save((err: any) => {
+//     if (err) {
+//         console.log(err);
+//     }
+// })

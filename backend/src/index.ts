@@ -13,14 +13,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRouter);
 
-const game = new gameModel({
-    level: 10
-})
-game.save((err: any) => {
-    if (err) {
-        console.log(err);
-    }
-})
+
 app.listen(port, () => {
     console.log(`server started at localhost:${port}`);
 })

@@ -1,6 +1,17 @@
 import mongoose from 'mongoose'
+import dbConnect from '../dbConnect';
+import { iGame } from './Game'
+import { iUser } from './User'
+
+dbConnect();
 
 const { Schema, model } = mongoose;
+
+export interface iScore extends Document {
+    user: iUser,
+    game: iGame,
+    score: Number
+}
 
 const scoreSchema = new Schema({
     user: {
@@ -14,6 +25,5 @@ const scoreSchema = new Schema({
     score: Number
 })
 
-const scoreModel = model('Score', scoreSchema);
+export const Score = model('Score', scoreSchema);
 
-export default scoreModel;
