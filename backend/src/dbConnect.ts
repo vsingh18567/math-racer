@@ -10,4 +10,4 @@ export default function () {
 
     const uri = `mongodb+srv://${username}:${password}@math-racer-cluster.cdndn.mongodb.net/${dbName}?retryWrites=true&w=majority`;
     mongoose.connect(uri);
-} 
+}

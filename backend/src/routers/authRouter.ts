@@ -1,52 +1,84 @@
 import express from 'express';
 import { Query } from 'mongoose';
-import { User , iUser} from '../models/User'
+import { User , IUser} from '../models/User'
 import crypto from 'crypto'
 
 const router = express.Router();
 
 
 const hashPwd = (salt: string, pwd: string) => {
-    var hmac = crypto.createHmac('sha256', salt);
+    const hmac = crypto.createHmac('sha256', salt);
     return hmac.update(pwd).digest('hex')
 }
 
-router.get('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
+
     const {username, email, password} = req.body;
-    
-    let query : iUser = await User.findOne({
-        username: username,
+    console.log(req.body)
+    const query : IUser = await User.findOne({
+        username,
     })
 
-    if (query == null) {
-        res.status(406)
-        res.send({
+    if (query !== null) {
+        res.status(406).send({
             error: 'USER EXISTS'
         })
+        return;
     }
 
-    var salt = crypto.randomBytes(128).toString('base64')
+    const salt = crypto.randomBytes(128).toString('base64')
     const hashedPwd = hashPwd(salt, password);
-    const newUser : iUser = new User({
-        username: String,
-        email: email,
-        salt: salt,
+    const newUser : IUser = new User({
+        username,
+        email,
+        salt,
         hashed_password: hashedPwd
     })
 
-    newUser.save((err) => {
+    newUser.save((err: any) => {
         console.log(err)
-        res.status(400)
-        res.send({
+        res.status(400).send({
             error: 'COULD NOT SAVE'
         })
+        res.end()
     });
-    
 
-    res.send('LOGGED IN');
+    res.status(200).send('LOGGED IN')
 })
 
-router.get('/login')
+router.post('/login', async (req, res) => {
+    const {username, password} = req.body;
+    const query : IUser = await User.findOne({
+        username
+    })
+
+    if (query == null) {
+        res.status(406).send({
+            error: 'NO SUCH USER'
+        })
+        return
+    }
+
+    const salt = query.salt;
+    const hashedPwd = hashPwd(salt.toString(), password);
+
+    if (hashedPwd !== query.hashed_password) {
+        res.status(406).send({
+            error: 'WRONG PASSWORD'
+        })
+        return
+    } else {
+        res.status(200).send('GOOD CREDENTIALS')
+    }
+})
+
+router.delete('/delete', (req, res) => {
+    const {username} = req.body
+    User.deleteOne({
+        username
+    }).then((value) => res.status(200).send('DELETED'))
+
+})
 
 
 export default router;

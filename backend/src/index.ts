@@ -1,11 +1,13 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 import { Sequelize } from 'sequelize';
-import gameModel from './models/Game';
 import authRouter from './routers/authRouter';
 
 const app = express();
 const port = 8000;
 
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(express.json())
 
 app.get('/', (req, res) => {
     res.send('Sup homie');

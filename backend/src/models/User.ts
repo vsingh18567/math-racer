@@ -4,11 +4,11 @@ dbConnect();
 
 const { Schema, model } = mongoose;
 
-export interface iUser extends Document {
-    username: String,
-    email: String,
-    salt: String
-    hashed_password: String
+export interface IUser extends Document {
+    username: string,
+    email: string,
+    salt: string
+    hashed_password: string
 }
 
 const userSchema = new Schema({
