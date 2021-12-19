@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io'
-import { Game, IGame } from '../models/Game'
-import { User, IUser } from '../models/User'
-import { IScore, Score } from '../models/Score'
+import { Game, IGame } from './models/Game'
+import { User, IUser } from './models/User'
+import { IScore, Score } from './models/Score'
 export default function (socket : Socket) : void {
     console.log('Client connected')
     socket.emit('connection', null)
@@ -21,9 +21,8 @@ export default function (socket : Socket) : void {
 
         socket.to(`game${gID}`).emit('new-player', {
             userID: userID,
-            username:
+            username: user.username
         })
-
     })
 
     socket.on('game-start', async (gID, timeCreated) => {

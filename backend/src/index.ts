@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import http from 'http'
-import socketHandler from './sockets/socket'
+import socketHandler from './socket'
 import authRouter from './routers/authRouter';
 import gameRouter from './routers/gameRouter'
 import { Server } from 'socket.io'
