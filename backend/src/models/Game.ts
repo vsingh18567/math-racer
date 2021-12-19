@@ -6,7 +6,7 @@ dbConnect();
 
 const { Schema, model } = mongoose;
 
-export interface IProblem extends Document {
+export interface IProblem {
     question: string,
     answer: number
 }
@@ -17,12 +17,17 @@ const problemSchema = new Schema({
 })
 
 export interface IGame extends Document {
+    gID: string
     level: number,
     timeCreated: Date,
     problems: IProblem[]
 }
 
 const gameSchema = new Schema({
+    gID: {
+        type: String,
+        unique: true
+    },
     level: Number,
     timeCreated: Date,
     problems: [problemSchema]
@@ -30,11 +35,4 @@ const gameSchema = new Schema({
 
 export const Game = model('Game', gameSchema);
 
-// const game = new gameModel({
-//     level: 10
-// })
-// game.save((err: any) => {
-//     if (err) {
-//         console.log(err);
-//     }
-// })
+

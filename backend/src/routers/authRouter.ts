@@ -12,7 +12,6 @@ const hashPwd = (salt: string, pwd: string) => {
 }
 
 router.post('/register', async (req, res) => {
-
     const {username, email, password} = req.body;
     console.log(req.body)
     const query : IUser = await User.findOne({
@@ -28,7 +27,7 @@ router.post('/register', async (req, res) => {
 
     const salt = crypto.randomBytes(128).toString('base64')
     const hashedPwd = hashPwd(salt, password);
-    const newUser : IUser = new User({
+    const newUser : IUser = await new User({
         username,
         email,
         salt,
@@ -36,14 +35,17 @@ router.post('/register', async (req, res) => {
     })
 
     newUser.save((err: any) => {
-        console.log(err)
-        res.status(400).send({
-            error: 'COULD NOT SAVE'
-        })
-        res.end()
+        if (err) {
+            console.log(err)
+            res.status(400).send({
+                error: 'COULD NOT SAVE'
+            })
+        } else {
+            res.status(200).send('LOGGED IN')
+        }
+
     });
 
-    res.status(200).send('LOGGED IN')
 })
 
 router.post('/login', async (req, res) => {
@@ -77,7 +79,6 @@ router.delete('/delete', (req, res) => {
     User.deleteOne({
         username
     }).then((value) => res.status(200).send('DELETED'))
-
 })
 
 
