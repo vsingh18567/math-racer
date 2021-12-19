@@ -7,7 +7,7 @@ dbConnect();
 
 const { Schema, model } = mongoose;
 
-export interface IScore extends Document {
+export interface IScore extends mongoose.Document {
     user: IUser,
     game: IGame,
     score: number

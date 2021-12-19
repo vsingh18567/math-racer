@@ -1,6 +1,6 @@
 import mongoose, { Date, Document } from 'mongoose'
 import dbConnect from '../dbConnect';
-
+import {IUser} from './User'
 dbConnect();
 
 
@@ -17,7 +17,8 @@ const problemSchema = new Schema({
 })
 
 export interface IGame extends Document {
-    gID: string
+    gID: string,
+    host: IUser
     level: number,
     timeCreated: Date,
     problems: IProblem[]
@@ -27,6 +28,10 @@ const gameSchema = new Schema({
     gID: {
         type: String,
         unique: true
+    },
+    host: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     level: Number,
     timeCreated: Date,

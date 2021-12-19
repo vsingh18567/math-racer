@@ -3,10 +3,12 @@ import { IScore, Score } from '../models/Score';
 import { Game , IGame, IProblem } from '../models/Game'
 import generateProblems from './levels';
 import crypto from 'crypto'
+import e from 'express';
 
 const router = express.Router();
 
 router.get('/create', async (req, res) => {
+    const {userID} = req.body;
     let status = true;
     let gid = ""
     while (status) {
@@ -17,7 +19,10 @@ router.get('/create', async (req, res) => {
         }
         gid = gid.toUpperCase()
     }
-    const newGame : IGame = await new Game({gID: gid});
+    const newGame : IGame = await new Game({
+        gID: gid,
+        host: userID
+    });
     newGame.save((err: any) => {
         if (err) {
             console.log(err)
@@ -53,14 +58,17 @@ router.post('/set', async (req, res) => {
         return
     }
     const num = parseInt(level, 10)
-    console.log(query.problems.length)
-    if (query.level === undefined || !query.problems || query.problems.length !== 200) {
-        query.level = num
-        query.problems = generateProblems(num)
-        console.log(query.problems.length)
-        await query.save()
-    }
-    res.send()
+    query.level = num
+    query.problems = generateProblems(num)
+    query.save((err: any) => {
+        if (err) {
+            res.status(400).send({
+                error: 'COULD NOT SAVE'
+            })
+        } else {
+            res.send()
+        }
+    })
 
     // TODO: Set up Websockets stuff
 })
@@ -82,8 +90,8 @@ router.get('/get', async (req, res) => {
 
 
     res.send({
-        gameInfo : game,
-        scores
+        gameInfo: game,
+        scores: scores
     })
 })
 
